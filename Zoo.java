@@ -1,3 +1,5 @@
+// really liked this project, gonna turn it into my own evolution project.
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,15 @@ public class Zoo extends JPanel {
 
     private int width, height;
     private ArrayList<ArrayList<LinkedList<Entity>>> grid;
+
+    // write the updates in the top left corner of simulation
+    private static final int maxLog = 8;
+    public static final ArrayList<String> logs = new ArrayList<>(maxLog);
+
+    public static void log(String msg) {
+        logs.add(msg);
+        if (logs.size() > maxLog) logs.remove(0);
+    }
 
     public Zoo(int w, int h) {
         // initalize the grid using ArrayLists for the rows and colums and LinkedLists for the cell stack
@@ -58,6 +69,16 @@ public class Zoo extends JPanel {
                     e.draw(g);
                 }
             }
+        }
+
+        // draw the logs
+        g.setColor(new Color(0,0,0,150));
+        g.fillRect(5, 5, 350, maxLog * 15 + 10);
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        for (int i = 0; i < logs.size(); i++) {
+            g.drawString(logs.get(i), 10, 20 + i * 15);
         }
 	}
 
@@ -120,7 +141,17 @@ public class Zoo extends JPanel {
 		frame.add(zoo);
 		frame.setVisible(true);
 
-        // TODO: add food and animals to the zoo
+        for (int i = 0; i < 5; i++) {
+            zoo.add(new Cat(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+            zoo.add(new Dog(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+        }
+        for (int i = 0; i < 3; i++) {
+            zoo.add(new Rat(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+        }
+        for (int i = 0; i < 10; i++) {
+            zoo.add(new Cheese(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+            zoo.add(new Ham(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+        }
 
         int tickCount = 0;
         while(true) {
@@ -131,7 +162,10 @@ public class Zoo extends JPanel {
                 ex.printStackTrace();
             }
 
-            // TODO: add food and animals every 50, 100, 150, etc. ticks using tickCount and modulo (%)
+            if (tickCount % 50 == 0 && tickCount > 0) {
+                zoo.add(new Cheese(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+                zoo.add(new Ham(rand.nextInt(ZOO_COLS), rand.nextInt(ZOO_ROWS)));
+            }
 
             zoo.tick();
 
